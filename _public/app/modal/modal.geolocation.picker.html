@@ -1,0 +1,43 @@
+<div class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary">
+        <button type="button" class="close" ng-click="close(false)" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Select geolocational position on the map</h4>
+      </div>
+      <div class="modal-body">
+
+        <div map-lazy-load="https://maps.google.com/maps/api/js?key=AIzaSyDk8Fpjfb7MyASsRLGpFVMGrMp-JwaCcLQ&libraries=places" style="position:relative">
+          <input id="pac-input" places-auto-complete types="['geocode']" />
+          <ng-map
+            zoom="15",
+            zoom-control="true"
+            zoom-control-options="{style:'BIG', position: 'RIGHT_BOTTOM'}"
+            street-view-control="false"
+            default-style="true"
+            style="width:570px;height:500px"
+            class="map"
+            id="map"
+          >
+
+            <marker id="location_picker"
+                    label="Locate this marker" position="{{location}}"
+                    draggable = "true"
+            >
+            </marker>
+
+
+          </ng-map>
+        </div>
+
+
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" ng-click="selectPosition()" class="btn btn-default" data-dismiss="modal">Select</button>
+        <button type="button" ng-click="close(false)" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

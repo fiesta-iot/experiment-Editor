@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified" targetNamespace="http://www.fiesta-iot.eu/fedspec"
+           xmlns:fed="http://www.fiesta-iot.eu/fedspec" xmlns:prt="http://www.w3.org/2007/SPARQL/protocol-types#">
+
+  <xs:import namespace="http://www.w3.org/2007/SPARQL/protocol-types#"
+             schemaLocation="https://www.w3.org/2007/SPARQL/protocol-types" />
+
+  <xs:element name="FEDSpec">
+    <xs:annotation>
+      <xs:documentation>FIESTA Experiment Description Specification
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="fed:FEMO" />
+      </xs:sequence>
+      <xs:attribute name="userID" use="required" type="xs:anyURI" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="FEMO">
+    <xs:annotation>
+      <xs:documentation>FIESTA Experiment Model Object
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" ref="fed:description" />
+        <xs:element minOccurs="0" maxOccurs="1" ref="fed:EDM" />
+        <xs:element ref="fed:domainOfInterest" />
+        <xs:element maxOccurs="unbounded" ref="fed:FISMO" />
+      </xs:sequence>
+      <xs:attribute name="id" use="optional" type="xs:anyURI" />
+      <xs:attribute name="name" type="xs:NCName" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="description" type="xs:string" />
+
+  <xs:element name="EDM" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Experiment design metadata.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="FISMO">
+    <xs:annotation>
+      <xs:documentation>FIESTA Service Model Object</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" ref="fed:description" />
+        <xs:element minOccurs="0" name="discoverable" type="xs:boolean"
+                    default="false" />
+        <xs:element ref="fed:experimentControl" />
+        <xs:element ref="fed:experimentOutput" />
+        <xs:element ref="fed:queryControl" minOccurs="0" />
+        <xs:element name="service" nillable="false" type="xs:anyURI"
+                    minOccurs="0" />
+        <xs:element ref="fed:rule" minOccurs="0" />
+      </xs:sequence>
+      <xs:attribute name="id" use="optional" type="xs:anyURI" />
+      <xs:attribute name="name" type="xs:NCName" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="queryControl">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="fed:quantityKind" minOccurs="0" />
+        <xs:element ref="fed:staticLocation" minOccurs="0" />
+        <xs:element ref="fed:queryInterval" minOccurs="0" />
+        <xs:element ref="prt:query-request" maxOccurs="1"
+                    minOccurs="1" />
+        <xs:element maxOccurs="1" minOccurs="0" ref="fed:dynamicAttrs" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="domainKnowledge" type="xs:anyURI" />
+
+  <xs:element name="staticLocation">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="latitude" type="xs:string" />
+        <xs:element name="longitude" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="queryInterval">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="fromDateTime" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="toDateTime" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="intervalNowToPast" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="experimentControl">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="fed:scheduling" maxOccurs="1" />
+        <xs:element name="trigger" type="xs:anyURI" minOccurs="0" />
+        <xs:element name="reportIfEmpty" type="xs:boolean"
+                    minOccurs="0" default="true" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="rule">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="fed:ruleDefinition" />
+        <xs:element ref="fed:domainKnowledge" />
+        <xs:element ref="fed:quantityKind" />
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ruleDefinition" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>i.e. Jena rule or SPARQL construct
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="domainOfInterest">
+    <xs:annotation>
+      <xs:documentation>List of URLs linking with M3-lite taxonomy.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+      <xs:list itemType="xs:anyURI" />
+    </xs:simpleType>
+  </xs:element>
+
+  <xs:element name="quantityKind">
+    <xs:annotation>
+      <xs:documentation>List of URLs linking with M3-lite taxonomy.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+      <xs:annotation>
+        <xs:documentation>URL linking with M3-lite taxonomy.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:list itemType="xs:anyURI" />
+    </xs:simpleType>
+  </xs:element>
+
+  <xs:element name="scheduling">
+    <xs:complexType>
+      <xs:all>
+        <xs:element form="qualified" name="startTime" type="xs:dateTime"
+                    minOccurs="0" />
+        <xs:element name="Periodicity" minOccurs="0" maxOccurs="1"
+                    type="xs:int" />
+        <xs:element minOccurs="0" name="stopTime" type="xs:dateTime" />
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="experimentOutput">
+    <xs:complexType>
+      <xs:sequence maxOccurs="1" minOccurs="1">
+        <xs:element minOccurs="0" ref="fed:file" maxOccurs="unbounded" />
+        <xs:element maxOccurs="unbounded" ref="fed:widget"
+                    minOccurs="0" />
+      </xs:sequence>
+      <xs:attribute name="location" type="xs:anyURI" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="file">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="type" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="widget">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="fed:presentationAttr" />
+      </xs:sequence>
+      <xs:attribute name="widgetID" use="required" type="xs:anyURI" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="presentationAttr">
+    <xs:complexType>
+      <xs:attribute name="name" use="required" type="xs:string" />
+      <xs:attribute name="value" use="required" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="dynamicAttrs">
+    <xs:annotation>
+      <xs:documentation>Definition of the query dynamic attributes and
+        their default values
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="predefinedDynamicAttr" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element ref="fed:dynamicQueryInterval" minOccurs="0" />
+              <xs:element ref="fed:dynamicGeoLocation" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="dynamicAttr" maxOccurs="unbounded"
+                    minOccurs="0">
+          <xs:complexType>
+            <xs:attribute name="name" type="xs:string" />
+            <xs:attribute name="value" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="dynamicQueryInterval">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="fromDateTime" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="toDateTime" type="xs:dateTime" />
+        <xs:element minOccurs="0" name="intervalNowToPast" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="dynamicGeoLocation">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="latitude" type="xs:string" />
+        <xs:element name="longitude" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

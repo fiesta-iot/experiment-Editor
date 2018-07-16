@@ -1,0 +1,38 @@
+var query='PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n' +
+          'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n' +
+          'PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>\n' +
+          'PREFIX iot-lite: <http://purl.oclc.org/NET/UNIS/fiware/iot-lite#>\n' +
+          'PREFIX dul: <http://www.loa.istc.cnr.it/ontologies/DUL.owl#>\n' +
+          'PREFIX time: <http://www.w3.org/2006/time#>\n' +
+          'PREFIX qu-quantity: <http://purl.oclc.org/NET/ssnx/qu/quantity#>\n' +
+          'PREFIX qu-unit: <http://purl.oclc.org/NET/ssnx/qu/unit#>\n' +
+          'PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n' +
+          'PREFIX m3-lite: <http://purl.org/iot/vocab/m3-lite#>\n' +
+          'PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n' +
+          '\n' +
+          '# url: https://platform-dev.fiesta-iot.eu/iot-registry/api/queries/execute/global\n' +
+          'SELECT DISTINCT ?sensor  ?val ?timeStamp\n' +
+          'WHERE {\n' +
+          '  #remove the hash sign from the filters  to enable them\n' +
+          '  FILTER (IRI(?qkType)=<http://purl.org/iot/vocab/m3-lite#' + this.sensor + '>) .\n' +
+          '  FILTER ((?timeStamp > "' + this.fromDate + '"^^xsd:dateTime && ?timeStamp < "' + this.toDate+ '"^^xsd:dateTime )  ) .\n' +
+          '  ?obsr a ssn:Observation .\n' +
+          '  ?obsr ssn:observedBy ?sensor .\n' +
+          '  #testbed 1\n' +
+          '  {\n' +
+          '    ?sensor ssn:hasDeployment ?testbed .\n' +
+          '  }\n' +
+          '  #Other testbeds\n' +
+          '  UNION\n' +
+          '  {\n' +
+          '    ?dev ssn:hasSubSystem ?sensor .\n' +
+          '    ?dev ssn:hasDeployment ?testbed .\n' +
+          '  }\n' +
+          '  ?obsr ssn:observationResult ?sensout .\n' +
+          '  ?obsr ssn:observedProperty ?qk .\n' +
+          '  ?qk a ?qkType .\n' +
+          '  ?sensout ssn:hasValue ?obsrVal .\n' +
+          '  ?obsrVal dul:hasDataValue ?val .\n' +
+          '  ?obsr ssn:observationSamplingTime ?instant.\n' +
+          '  ?instant time:inXSDDateTime ?timeStamp.\n' +
+          '} order by DESC(?timeStamp)';

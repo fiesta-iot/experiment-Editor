@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="release-version" content="V1.0-r20180705-04">
+
+  <title>FIESTA Experiment Editor</title>
+
+
+  <!--
+  <link rel="shortcut icon" type="image/ico" href="./icons/keti.onem2m.resmon.ico"/>
+  <link rel="shortcut icon" type="image/png" href="./icons/keti.onem2m.resmon_32x32.png"/>
+  -->
+
+
+  <link rel='stylesheet' href='./css/style.css' />
+  <link rel='stylesheet' href='./css/list.femo.css' />
+  <link rel='stylesheet' href='./css/edit.femo.css' />
+  <link rel='stylesheet' href='./css/user.login.css' />
+  <link rel='stylesheet' href='./css/toggle.switch.css' />
+  <link rel='stylesheet' href='./css/search.box.css' />
+
+  <link rel="stylesheet" href="./components/noto-sans-kr/styles.css">
+
+  <script src="./components/jquery/dist/jquery.min.js"></script>
+  <script src="./components/jquery-ui/jquery-ui.min.js"></script>
+  <script src="./components/lodash/dist/lodash.min.js"></script>
+
+
+  <link rel='stylesheet' href='./components/bootstrap/dist/css/bootstrap.css' />
+  <script src='./components/bootstrap/dist/js/bootstrap.js'></script>
+
+  <script src="./components/promise-polyfill/promise.js"></script>
+
+  <script src="./components/angular/angular.js"></script>
+  <script src="./components/angular-cookies/angular-cookies.js"></script>
+  <script src="./components/angular-ui-router/release/angular-ui-router.min.js"></script>
+  <script src="./components/angular-modal-service/dst/angular-modal-service.js"></script>
+  <script src="./components/angular-bootstrap/ui-bootstrap.js"></script>
+  <script src="./components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+  <script src="./components/angular-pretty-xml/src/angular-pretty-xml.js"></script>
+
+  <script src="./components/ng-tags-input/ng-tags-input.js"></script>
+  <link rel="stylesheet" href="./components/ng-tags-input/ng-tags-input.min.css" />
+  <link rel="stylesheet" href="./components/ng-tags-input/ng-tags-input.bootstrap.min.css" />
+
+  <script src="./components/bootstrap-ui-datetime-picker/dist/datetime-picker.min.js"></script>
+
+  <script src="./components/angular-sanitize/angular-sanitize.js"></script>
+  <script src="./components/ngToast/dist/ngToast.js"></script>
+  <link rel="stylesheet" href="./components/ngToast/dist/ngToast.css" />
+  <script src="./components/angular-animate/angular-animate.js"></script>
+  <link rel="stylesheet" href="./components/ngToast/dist/ngToast-animations.css" />
+
+
+  <link rel="stylesheet" href="./components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" type="text/css"/>
+  <script src="./components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+  <script src="./components/ng-scrollbars/dist/scrollbars.min.js"></script>
+
+  <script src="./components/moment/moment.js"></script>
+
+  <link href='./components/yasqe/dist/yasqe.css' rel='stylesheet' type='text/css'/>
+  <script src="./components/yasqe/dist/yasqe.bundled.js"></script>
+
+  <script src="./components/clipboard/dist/clipboard.js"></script>
+  <script src="./components/ngclipboard/dist/ngclipboard.js"></script>
+  <script src="./components/angular-file-upload/dist/angular-file-upload.js"></script>
+
+  <script src="./components/ngmap/build/scripts/ng-map.no-dependency.js"></script>
+  <!--
+  <script src="http://maps.google.com/maps/api/js?key=AIzaSyDk8Fpjfb7MyASsRLGpFVMGrMp-JwaCcLQ"></script>
+-->
+  <script src="./app/env.js"></script>
+  <script src="./app/main.js"></script>
+  <script src="./app/controller/list.femo.js"></script>
+  <script src="./app/controller/edit.femo.js"></script>
+  <script src="./app/controller/user.login.js"></script>
+
+  <script src="./app/service/fiesta.cloud.js"></script>
+
+  <script src="./app/modal/modal.xmlpreview.js"></script>
+  <script src="./app/modal/modal.widget.editor.js"></script>
+  <script src="./app/modal/modal.geolocation.picker.js"></script>
+
+  <script src="./app/directive/yasqe.directive.js"></script>
+
+  <script src="./js/synctechno.util.js"></script>
+
+</head>
+<body lang="ko" ng-app="fiestaExpModeler">
+
+<div class="root-container">
+
+  <div ui-view class="main-view"></div>
+
+</div>
+
+
+<div class="waitfor-modal modal fade" id="common-waitfor-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary">
+        <h4 class="modal-title">
+          <span class="glyphicon glyphicon-time"></span> Please Wait
+        </h4>
+      </div>
+      <div class="modal-body">
+        <br />
+        <br />
+        <div class="progress">
+          <div class="progress-bar progress-bar-info progress-bar-striped active" style="width: 100%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<toast></toast>
+</body>
+</html>

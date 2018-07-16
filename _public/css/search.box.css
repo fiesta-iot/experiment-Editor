@@ -1,0 +1,42 @@
+.femo-list-search-box {
+  height: 30px;
+  width: 300px;
+  float: left;
+  padding: 0;
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+}
+
+#input-femo-search {
+  height: 30px;
+  width: 30px;
+  background-image: url(../img/bg_search_input.png);
+  background-size: 30px;
+  background-position: 0px;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  padding: 0px;
+  font-size: 12pt;
+  display: inline-block;
+  outline: none;
+  color: #2d3da5;
+  transition: width .4s cubic-bezier(0.000, 0.795, 0.000, 1.000);
+  cursor: pointer;
+  border: 1px solid white;
+  border-radius: 5px;
+  padding-left: 30px;
+  font-weight: bold;
+  background-color: white;
+}
+
+#input-femo-search:hover {
+  width: 410px;
+  padding-left: 40px;
+}
+
+#input-femo-search:focus {
+  width: 410px;
+  cursor: text;
+  padding-left: 40px;
+}

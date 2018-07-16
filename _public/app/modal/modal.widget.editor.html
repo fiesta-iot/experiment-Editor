@@ -1,0 +1,27 @@
+<div class="expoutput-widget-editor modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary">
+        <button type="button" class="close" ng-click="close(false)" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">FIESTA Service Experiment Output Widget Editor</h4>
+      </div>
+      <div class="modal-body">
+
+        <label title="widget ID">Widget ID: </label>
+        <input type="text" class="form-control" ng-model="widgetInfo.widget.widgetID" ng-disabled="true" ng-required="true"/>
+
+        <br />
+        <label title="presentation attributes">Presentation Attributes(JSON): </label>
+        <textarea class="form-control" id="ta-presentation-attr-value" rows="5" ng-model="widgetInfo.widget.ns2_presentationAttr.value" placeholder="{&#13;&#10;'Method': ['Method 1',' Method 2',' Method 3'],&#13;&#10;'Parameters': ['Parameters 1', 'Parameters 2', 'Parameters 3']&#13;&#10;}">
+          Input JSON Type value
+        </textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button ng-if="widgetInfo.mode=='create'" type="button" ng-click="create()" class="btn btn-default" data-dismiss="modal">Create</button>
+        <button ng-if="widgetInfo.mode=='edit'" type="button" ng-click="save()" class="btn btn-default" data-dismiss="modal">Save</button>
+        <button type="button" ng-click="close(false)" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

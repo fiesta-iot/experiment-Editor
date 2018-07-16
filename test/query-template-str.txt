@@ -1,0 +1,38 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>
+PREFIX iot-lite: <http://purl.oclc.org/NET/UNIS/fiware/iot-lite#>
+PREFIX dul: <http://www.loa.istc.cnr.it/ontologies/DUL.owl#>
+PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX qu-quantity: <http://purl.oclc.org/NET/ssnx/qu/quantity#>
+PREFIX qu-unit: <http://purl.oclc.org/NET/ssnx/qu/unit#>
+PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX m3-lite: <http://purl.org/iot/vocab/m3-lite#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+# url: https://platform-dev.fiesta-iot.eu/iot-registry/api/queries/execute/global
+SELECT DISTINCT ?sensor  ?val ?timeStamp
+WHERE {
+  #remove the hash sign from the filters  to enable them
+  FILTER (IRI(?qkType)=<http://purl.org/iot/vocab/m3-lite#%%quantityKind%%>) .
+  FILTER ((?timeStamp > "%%fromDateTime%%"^^xsd:dateTime && ?timeStamp < "%%toDateTime%%"^^xsd:dateTime )  ) .
+  ?obsr a ssn:Observation .
+  ?obsr ssn:observedBy ?sensor .
+  #testbed 1
+  {
+    ?sensor ssn:hasDeployment ?testbed .
+  }
+  #Other testbeds
+  UNION
+  {
+    ?dev ssn:hasSubSystem ?sensor .
+    ?dev ssn:hasDeployment ?testbed .
+  }
+  ?obsr ssn:observationResult ?sensout .
+  ?obsr ssn:observedProperty ?qk .
+  ?qk a ?qkType .
+  ?sensout ssn:hasValue ?obsrVal .
+  ?obsrVal dul:hasDataValue ?val .
+  ?obsr ssn:observationSamplingTime ?instant.
+  ?instant time:inXSDDateTime ?timeStamp.
+} order by DESC(?timeStamp)

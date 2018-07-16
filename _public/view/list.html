@@ -1,0 +1,88 @@
+<div ng-controller="listFemoController" ng-init="init()">
+
+  <div class="femo-list-head">
+    <div class="femo-list-head-new" ng-show="!uploadMode">
+      <h1 class="list-head-title"><span ng-bind="femos.length"></span> Experiments</h1>
+      <div class="list-head-commands">
+        <div class="femo-list-search-box">
+          <input id="input-femo-search" ng-model="inputFemoSearchKeyword" type="text" placeholder="Input keyword to search Experiments">
+        </div>
+        <button class="btn btn-default femo-upload-button command-upload" ng-click="showUploadUi()" title="Upload Experiment XML"><i class="glyphicon glyphicon glyphicon-cloud-upload"></i></button>
+        <button class="btn btn-default femo-new-button command-new" ng-click="newFemo()" title="Create new Experiment"><i class="glyphicon glyphicon-plus"></i></button>
+      </div>
+    </div>
+    <div class="femo-list-head-upload" ng-show="uploadMode" nv-file-drop uploader="uploader" filters="queueLimit, customFilter, syncFilter">
+      <h3>Import Experiments XML</h3>
+
+      <div class="row">
+        <div class="col-xs-4">
+          <div ng-show="uploader.isHTML5">
+            <div class="femo-xml-file my-drop-zone" nv-file-over="" uploader="uploader">
+              <p>Drop Experiement XML file here</p>
+            </div>
+          </div>
+          <input type="file" nv-file-select="" uploader="uploader" accept=".xml" style="width: 150px;"/>
+        </div>
+        <div class="col-xs-8">
+          <table class="table" ng-repeat="item in uploader.queue">
+            <tbody>
+            <tr>
+              <td ><div class="upload-file-name" title="{{item.file.name}}">{{ item.file.name }}</div></td>
+              <td nowrap><span ng-show="uploader.isHTML5">{{ item.file.size/1024/1024|number:2 }} MB</span></td>
+              <td class="text-center">
+                <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+                <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+              </td>
+            </tr>
+            <tr ng-show="uploader.isHTML5">
+              <td colspan="3">
+                <div class="progress" style="margin-bottom: 0;">
+                  <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="3" nowrap>
+                <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                  <span class="glyphicon glyphicon-upload"></span> Upload
+                </button>
+                <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading">
+                  <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+                </button>
+                <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+                  <span class="glyphicon glyphicon-trash"></span> Remove
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <button class="btn btn-default femo-new-button command-new" ng-click="uploadMode = false" title="Finish upload mode"><i class="glyphicon glyphicon glyphicon-remove"></i></button>
+
+    </div>
+  </div>
+
+  <div class="femo-list-item" ng-repeat="femo in femos | filter:femoSearchFilter">
+    <div class="femo-name has-action" ng-click="editFemo(femo)">
+      <h1 class="femo-name-text" ng-bind="femo.name" id="{{femo.id}}" title="{{femo.name}}"></h1>
+      <p class="femo-description" ng-bind="femo.ns2_description.$t"></p>
+    </div>
+    <div class="femo-info">
+      <div class="fismo-count">
+        <span class="femo-info-fismos" ng-bind="femo.ns2_FismoDescriptiveID.length"></span> <span>fismos</span>
+      </div>
+      <div class="femo-commands">
+        <button class="femo-command-button command-download" ng-click="downloadFemo(femo)" title="Download Experiment"></button>
+        <button class="femo-command-button command-clone" ng-click="cloneFemo(femo)" title="Duplicate Experiment"></button>
+        <button class="femo-command-button command-edit" ng-click="editFemo(femo)" title="Edit Experiment"></button>
+        <button class="femo-command-button command-delete" ng-click="deleteFemo(femo)" title="Delete Experiment"></button>
+      </div>
+    </div>
+    <div class="femo-doi">
+      <span class="femo-doi-item" ng-bind="doi" ng-style="doiItemStyle(doi)" ng-repeat="doi in getDOIList(femo) track by $index"></span>
+  </div>
+
+</div>

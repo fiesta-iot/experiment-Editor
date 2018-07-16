@@ -1,0 +1,33 @@
+{
+  "name": "noto-sans-kr",
+  "version": "0.1.1",
+  "authors": [
+    "HyunSeob <sytte1017@gmail.com>"
+  ],
+  "description": "한국어용 Noto Sans의 경량화 버전입니다.",
+  "main": "styles.css",
+  "moduleType": [],
+  "keywords": [
+    "noto-sans",
+    "font",
+    "Korean"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/HyunSeob/noto-sans-kr",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "0.1.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.1.1",
+    "commit": "5813d84ebf4df8897af634bb71f55debd91f0bd8"
+  },
+  "_source": "https://github.com/HyunSeob/noto-sans-kr.git",
+  "_target": "^0.1.1",
+  "_originalSource": "noto-sans-kr"
+}

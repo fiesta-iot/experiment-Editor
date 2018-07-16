@@ -1,0 +1,398 @@
+<div ng-controller="editFemoController" ng-init="init()">
+
+
+
+  <div class="femo-edit-buttons">
+    <button class="editing-button back-button" ng-click="back()" title="Back to the Experiment list page">BACK</button>
+    <button class="editing-button save-button"  ng-click="saveFemo()" title="Save current Experiment to ERM server">SAVE</button>
+    <button class="editing-button preview-button"  ng-click="previewFemo()" title="Preview XML source for current Experiment">PREVIEW</button>
+  </div>
+
+  <div class="femo-info-block">
+    <table class="femo-info">
+      <tr>
+        <th class="femo-table-th femo-edit-femoinfo">
+          <div class="femo-table-title-box">
+            Experiment
+          </div>
+        </th>
+        <th class="femo-table-th femo-edit-fismoinfo">
+          <div class="femo-table-title-box">
+            Services
+            <button class="btn btn-default fismo-new-button" ng-click="createFismo()" title="Add new Service"><i class="glyphicon glyphicon-plus"></i></button>
+          </div>
+        </th>
+        <th class="femo-table-th femo-edit-querycontrol">
+          <div class="femo-table-title-box">
+            Query
+            <button class="btn btn-default query-new-button" ng-click="createQueryControl()" ng-disabled="selectedFismo == null || selectedFismo.ns2_queryControl != null" title="Add new Query"><i class="glyphicon glyphicon-plus"></i></button>
+          </div>
+        </th>
+      </tr>
+      <tr>
+        <td>
+          <div class="femo-table-block"  ng-scrollbars>
+            <div class="femo-table-item femo-item selected" ng-bind="femo.name" ng-click="selectFemo(femo)" ng-class="selectionClass('femo')"></div>
+          </div>
+        </td>
+        <td>
+          <div class="femo-table-block" ng-scrollbars>
+
+            <div class="femo-table-item no-items" ng-if="femo.ns2_FISMO.length == 0">
+              No Service
+            </div>
+            <div ng-if="femo.ns2_FISMO.length > 0">
+              <div class="femo-table-item fismo-item" ng-repeat="fismo in femo.ns2_FISMO track by $index" ng-click="selectFismo(fismo)" ng-class="selectionClass('fismo', fismo)" >
+                <div ng-bind="fismo.name"></div>
+
+                <div class="fismo-item-command-box">
+                  <button class="fismo-item-button command-clone" ng-click="cloneFismo(fismo)" title="Duplicate Service"></button>
+                  <button class="fismo-item-button command-delete" ng-click="deleteFismo(fismo)" title="Delete Service"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="femo-table-block" ng-scrollbars>
+            <div class="femo-table-item no-items" ng-if="!selectedFismo">
+              Select Service
+            </div>
+            <div class="femo-table-item no-items" ng-if="selectedFismo && !selectedFismo.ns2_queryControl">
+              No QueryControls
+            </div>
+            <div ng-if="selectedFismo && selectedFismo.ns2_queryControl" >
+              <div class="femo-table-item querycontrol-item" ng-click="selectQueryControl()"  ng-class="selectionClass('query')" >
+                <div ><span>queryControl</span></div>
+
+                <div class="querycontrol-item-command-box">
+                  <button class="querycontrol-item-button command-delete" ng-click="deleteQueryControl()" title="Delete Query"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="femo-edit-block">
+    <div class="femo-edit-target" ng-class="editTargetClass()">
+      <span ng-bind="femo.name"></span>
+
+      <span ng-if="selectedFismo != null" class="glyphicon glyphicon-triangle-right"></span>
+      <span ng-if="selectedFismo != null" ng-bind="selectedFismo.name"></span>
+
+      <span ng-if="selectedFismo != null && selectedQueryControl != null" class="glyphicon glyphicon-triangle-right"></span>
+      <span ng-if="selectedFismo != null && selectedQueryControl != null" >queryControl</span>
+    </div>
+    <div class="femo-edit-slider">
+
+      <div class="femo-edit-slider-item femo-edit-femoinfo edit-show">
+        <form name="femoEditForm">
+        <div class="femo-edit-slider-item-inner">
+          <div class="form-group">
+            <label title="">Experiment Name:</label>
+            <input type="text" ng-model="femo.name" class="form-control" ng-required="true" placeholder="New Experiment"/>
+
+            <label title="short textual description of the experiment">Experiment Description:</label>
+            <textarea ng-model="femo.ns2_description.$t" class="form-control description" placeholder="This Experiment is ..."></textarea>
+
+            <label title="list of domains of interest of the experiment, which can be used for discovery purposes, based on the M3-lite taxonomy">Domain of interest:</label>
+            <tags-input ng-model="domainOfInterestTags" placeholder="Add a new DomainOfInterest" on-tag-removed="onDomainOfInterestsChanged()" on-tag-added="onDomainOfInterestsChanged()">
+              <auto-complete source="loadDomainOfIntrests($query)"></auto-complete>
+            </tags-input>
+
+          </div>
+        </div>
+        </form>
+      </div>
+      <div class="femo-edit-slider-item femo-edit-fismoinfo" ng-class="editFismoClass()">
+        <form name="fismoEditForm">
+        <div class="femo-edit-slider-item-inner">
+
+          <label>Service Name:</label>
+          <input type="text" ng-model="selectedFismo.name" class="form-control" ng-required="true" placeholder="New Service"/>
+
+          <label title="a short textual description of the experiment's Service">Service Description:</label>
+          <textarea ng-model="selectedFismo.ns2_description.$t" class="form-control description" placeholder="This Service is ..."></textarea>
+
+          <label title="if the experiment is discoverable or not">Discoverable:</label>
+          <label class="toggle-switch" title="if the experiment is discoverable or not">
+            <input type="checkbox" ng-model="selectedFismo.ns2_discoverable" >
+            <span class="slider round"></span>
+          </label>
+
+
+          <div class="form-group">
+            <label>Experiment control: </label>
+
+            <div class="x-input-group">
+
+              <label>Scheduling:</label>
+
+              <div class="form-inline">
+                <div class="input-group" title="the time that the service should be started">
+                  <span class="input-group-addon"><span class="addon-label">Start time</span></span>
+                  <input type="text" class="form-control" datetime-picker="yyyy-MM-dd HH:mm:ss" ng-model="pickerFemoStartTime.date" ng-required="true" is-open="pickerFemoStartTime.open" datepicker-options="pickerFemoStartTime.datepickerOptions" timepicker-options="pickerFemoStartTime.timepickerOptions" ng-change="pickerFemoStartTime.onSetTime()"  placeholder="yyyy-MM-dd HH:mm:ss"/>
+                  <span class="input-group-btn ">
+                    <button type="button" class="btn btn-default" ng-click="pickerFemoStartTime.open = true"><i class="glyphicon glyphicon-calendar"></i></button>
+                  </span>
+                </div>
+
+
+                <div class="input-group" title="when the service should be stopped">
+                  <span class="input-group-addon"><span class="addon-label">Stop time</span></span>
+                  <input type="text" class="form-control" datetime-picker="yyyy-MM-dd HH:mm:ss" ng-model="pickerFemoStopTime.date"  ng-required="true" is-open="pickerFemoStopTime.open"  datepicker-options="pickerFemoStopTime.datepickerOptions" timepicker-options="pickerFemoStopTime.timepickerOptions" ng-change="pickerFemoStopTime.onSetTime()"  placeholder="yyyy-MM-dd HH:mm:ss"/>
+                  <span class="input-group-btn ">
+                    <button type="button" class="btn btn-default" ng-click="pickerFemoStopTime.open = true"><i class="glyphicon glyphicon-calendar"></i></button>
+                  </span>
+                </div>
+
+
+                <div class="input-group" title="how often the service will be executed">
+                  <span class="input-group-addon"><span class="addon-label">Periodicity(sec)</span></span>
+                  <input type="text" ng-model="selectedFismo.ns2_experimentControl.ns2_scheduling.ns2_Periodicity.$t" ng-required="true" pattern="\d+" class="form-control" />
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="form-group">
+            <label>Experiment output: </label>
+
+            <div class="x-input-group experiment-output">
+              <div class="input-group" title="which hosts the URI where the output should be sent">
+                <span class="input-group-addon"><span class="addon-label">Location</span></span>
+                <input type="text" ng-model="selectedFismo.ns2_experimentOutput.location" class="form-control" placeholder="http://a.url.for/experiment/output/"/>
+              </div>
+
+              <div class="input-group" title="file type of the output">
+                <span class="input-group-addon"><span class="addon-label">File</span></span>
+                <tags-input ng-model="expOutputFileTypeTags" add-from-autocomplete-only="true" placeholder="Add a new file type" on-tag-removed="onExpOutputFileTypeChanged()" on-tag-added="onExpOutputFileTypeChanged()">
+                  <auto-complete source="loadExpOutputFileTypes($query)"></auto-complete>
+                </tags-input>
+              </div>
+
+              <label title="information for the instantiation of the presentation GUI as defined at the initial user request at the experiment definition time">Widget: </label>
+              <div class="x-input-group exp-output">
+
+                <button class="exp-output-widget create-widget-button" ng-click="createExpOutputWidget()" ng-disabled="selectedFismo.ns2_experimentOutput && selectedFismo.ns2_experimentOutput.ns2_widget && selectedFismo.ns2_experimentOutput.ns2_widget.length > 0" title="Create new widget">
+                  Create widget
+                </button>
+
+                <div class="exp-output-widget" ng-repeat="widget in selectedFismo.ns2_experimentOutput.ns2_widget track by $index">
+                  <div class="widget-id" ng-click="editExpOutputWidget(widget)"><span class="glyphicon glyphicon-cog"></span> <span ng-bind="widget.widgetID"></span></div>
+                  <div class="widget-buttons">
+                    <button class="widget-button widget-edit" ng-click="editExpOutputWidget(widget)" title="Edit widget">EDIT</button>
+                    <button class="widget-button widget-delete" ng-click="deleteExpOutputWidget(widget)" title="Delete widget">DELETE</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+<!-- Not yet supported
+            <label>
+              Service: <input type="text" class="form-control"/>
+            </label>
+
+            <label>
+              <label>Rule: </label>
+            </label>
+-->
+          </div>
+        </div>
+        </form>
+      </div>
+
+
+      <div class="femo-edit-slider-item femo-edit-querycontrol" ng-class="editQueryControlClass()">
+        <form name="queryEditForm">
+        <div class="femo-edit-slider-item-inner">
+          <div class="query-builder x-input-group">
+            <label>Quantity kind:</label>
+            <select class="form-control" ng-model="selectedQueryControl.ns2_quantityKind.$t">
+              <option ng-repeat="item in quantityKindsList track by $index" value="{{item.text}}">{{item.name}}</option>
+            </select>
+
+
+            <label>Static location:</label>
+            <div class="form-inline">
+              <div class="input-group">
+                <span class="input-group-addon"><span class="addon-label">Latitude</span></span>
+                <input type="text" ng-model="selectedQueryControl.ns2_staticLocation.ns2_latitude.$t" class="form-control" pattern="(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?)" placeholder="37.403902"/>
+              </div>
+
+              <div class="input-group">
+                <span class="input-group-addon"><span class="addon-label">Longitude</span></span>
+                <input type="text" ng-model="selectedQueryControl.ns2_staticLocation.ns2_longitude.$t" class="form-control" pattern="(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)" placeholder="127.159798"/>
+              </div>
+              <button ng-click="showGeolocationPicker('selectedQueryControl.ns2_staticLocation')" class="btn btn-default"><span class="glyphicon glyphicon-map-marker"></span></button>
+            </div>
+
+
+            <label>Query interval:</label>
+            <div class="form-inline">
+              <div class="input-group">
+                <span class="input-group-addon"><span class="addon-label">From date</span></span>
+                <input type="text" class="form-control" datetime-picker="yyyy-MM-dd HH:mm:ss" ng-model="pickerQCFromDate.date" is-open="pickerQCFromDate.open" datepicker-options="pickerQCFromDate.datepickerOptions"  timepicker-options="pickerQCFromDate.timepickerOptions"  ng-change="pickerQCFromDate.onSetTime()"  placeholder="yyyy-MM-dd HH:mm:ss" />
+                <span class="input-group-btn ">
+                  <button type="button" class="btn btn-default" ng-click="pickerQCFromDate.open = true"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+              </div>
+
+
+              <div class="input-group">
+                <span class="input-group-addon"><span class="addon-label">To date</span></span>
+                <input type="text" class="form-control" datetime-picker="yyyy-MM-dd HH:mm:ss" ng-model="pickerQCToDate.date" is-open="pickerQCToDate.open"  datepicker-options="pickerQCToDate.datepickerOptions" timepicker-options="pickerQCToDate.timepickerOptions" ng-change="pickerQCToDate.onSetTime()" placeholder="yyyy-MM-dd HH:mm:ss"  />
+                <span class="input-group-btn ">
+                  <button type="button" class="btn btn-default" ng-click="pickerQCToDate.open = true"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+              </div>
+
+
+              <div class="input-group">
+                <span class="input-group-addon"><span class="addon-label">Interval now to past(ms)</span></span>
+                <input type="text" ng-model="selectedQueryControl.ns2_queryInterval.ns2_intervalNowToPast.$t" pattern="\d+" class="form-control"/>
+              </div>
+            </div>
+
+            <div class="query-builder-action">
+              <button class="build-query-btn" ng-click="buildQueryScript()">Building new query</button>
+            </div>
+          </div>
+
+          <br/>
+
+          <div class="query-editor">
+            <label>Current query:</label>
+
+            <yasqe data="selectedQueryControl['ns3_query-request'].query.$t" ></yasqe>
+
+            <br />
+            <label>Dynamic Attributes:</label>
+            <div class="x-input-group">
+
+              <table class="layout-dynamic-attrs">
+                <tr>
+                  <td class="predefined-dynamic-attrs">
+
+                    <label>Predefined Dynamic Atrribute</label>
+
+                    <div class="x-input-group">
+
+
+                      <label>Dynamic Geo Location: <button ng-click="showGeolocationPicker('selectedQueryControl.ns2_dynamicAttrs.ns2_predefinedDynamicAttr.ns2_dynamicGeoLocation')" class="btn btn-default"><span class="glyphicon glyphicon-map-marker"></span></button></label>
+                      <div class="x-input-group">
+                        <div class="input-group">
+                        <span class="input-group-addon">
+                          <span class="addon-label">Latitude</span>
+                            <img class="clippy" src="./img/clippy.svg" width="13" ngclipboard data-clipboard-text="%%geoLatitude%%"/>
+                          </span>
+                          <input type="text" ng-model="selectedQueryControl.ns2_dynamicAttrs.ns2_predefinedDynamicAttr.ns2_dynamicGeoLocation.ns2_latitude.$t" class="form-control" pattern="(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?)" placeholder="37.403902"/>
+                        </div>
+
+                        <div class="input-group">
+                        <span class="input-group-addon">
+                          <span class="addon-label">Longitude</span>
+                          <img class="clippy" src="./img/clippy.svg" width="13" ngclipboard data-clipboard-text="%%geoLongitude%%"/>
+                        </span>
+                          <input type="text" ng-model="selectedQueryControl.ns2_dynamicAttrs.ns2_predefinedDynamicAttr.ns2_dynamicGeoLocation.ns2_longitude.$t" class="form-control" pattern="(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)" placeholder="127.159798"/>
+                        </div>
+
+                      </div>
+
+
+                      <label>Dynamic Query Interval:</label>
+                      <div class="x-input-group">
+                        <div class="input-group dropup">
+                        <span class="input-group-addon">
+                          <span class="addon-label">From date time</span>
+                          <img class="clippy" src="./img/clippy.svg" width="13" ngclipboard data-clipboard-text="%%fromDateTime%%"/>
+                        </span>
+                          <input type="text" class="form-control" datetime-picker="yyyy-MM-dd HH:mm:ss" ng-model="pickerDAFromDate.date" is-open="pickerDAFromDate.open" datepicker-options="pickerDAFromDate.datepickerOptions" timepicker-options="pickerDAFromDate.timepickerOptions"  ng-change="pickerDAFromDate.onSetTime()"   placeholder="yyyy-MM-dd HH:mm:ss"/>
+                          <span class="input-group-btn ">
+                          <button type="button" class="btn btn-default" ng-click="pickerDAFromDate.open = true"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                        </div>
+
+
+                        <div class="input-group dropup">
+                        <span class="input-group-addon">
+                          <span class="addon-label">To date time</span>
+                          <img class="clippy" src="./img/clippy.svg" width="13" ngclipboard data-clipboard-text="%%toDateTime%%"/>
+                        </span>
+                          <input type="text" class="form-control" datetime-picker="yyyy-MM-dd HH:mm:ss" ng-model="pickerDAToDate.date" is-open="pickerDAToDate.open"  datepicker-options="pickerDAToDate.datepickerOptions" timepicker-options="pickerDAToDate.timepickerOptions" ng-change="pickerDAToDate.onSetTime()" placeholder="yyyy-MM-dd HH:mm:ss"/>
+                          <span class="input-group-btn ">
+                          <button type="button" class="btn btn-default" ng-click="pickerDAToDate.open = true"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                        </div>
+
+
+                        <div class="input-group">
+                        <span class="input-group-addon">
+                          <span class="addon-label">Interval now to past(ms)</span>
+                          <img class="clippy" src="./img/clippy.svg" width="13" ngclipboard data-clipboard-text="%%intervalNowToPast%%"/>
+                        </span>
+                          <input type="text" ng-model="selectedQueryControl.ns2_dynamicAttrs.ns2_predefinedDynamicAttr.ns2_dynamicQueryInterval.ns2_intervalNowToPast.$t" pattern="\d+" class="form-control"/>
+                        </div>
+                      </div>
+                    </div>
+
+
+                  </td>
+                  <td class="inter-space"></td>
+                  <td class="dynamic-attr">
+                    <label>Dynamic Attribute</label>
+                    <div >
+                      <table class="table-dynamic-attr table table-striped table-bordered">
+                        <thead>
+                        <tr class="th-present-attr bg-default">
+                          <th class="col-present-attr-name">Name</th>
+                          <th class="col-present-attr-value">Default Value</th>
+                          <th class="col-present-attr-button"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="da in selectedQueryControl.ns2_dynamicAttrs.ns2_dynamicAttr track by $index">
+                          <td>
+                            <div class="input-group-notused">
+                              <input type="text" class="form-control present-attr" ng-model="da.name" ng-required="true" placeholder="attribute_name"/>
+<!--
+                              <span class="input-group-addon">
+                                <img class="clippy" src="/img/clippy.svg" width="13" ngclipboard data-clipboard-text="%%{{da.name}}%%"/>
+                              </span>
+-->
+                            </div>
+                          </td>
+                          <td><input type="text" class="form-control present-attr" ng-model="da.value" ng-required="true"  placeholder="attribute value"/></td>
+                          <td><button class="btn btn-default widget-del-attribute" ng-click="deleteDynamicAttribute($index)"><i class="glyphicon glyphicon-trash"></i></button></td>
+                        </tr>
+
+                        <tr class="tr-widget-new-attribute">
+                          <td><input type="text" class="form-control new-present-attr" ng-model="newDaName" placeholder="attribute_name"/></td>
+                          <td><input type="text" class="form-control new-present-attr" ng-model="newDaValue"  placeholder="attribute value"/></td>
+                          <td><button class="btn btn-default widget-new-attribute" ng-click="addNewDynamicAttribute()"><i class="glyphicon glyphicon-plus"></i></button></td>
+                        </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+
+                  </td>
+                </tr>
+              </table>
+
+            </div>
+          </div>
+        </div>
+        </form>
+      </div>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>

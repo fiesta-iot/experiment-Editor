@@ -1,0 +1,36 @@
+body {
+  padding: 20px;
+  font: 12px "Noto Sans Korean", Helvetica, Arial, sans-serif !important;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.has-action {
+  cursor: pointer;
+}
+
+input.ng-invalid {
+  border: 2px solid red;
+}
+
+i.user-avatar {
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  background-image: url("../img/avatar.png");
+  background-color: rgb(45, 61, 165);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 50%;
+}
+
+#navDropdownMenu {
+
+}
+
+#navDropdownMenu li.user-info {
+  padding: 2px 20px;
+}

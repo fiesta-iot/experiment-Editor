@@ -1,0 +1,91 @@
+<ns2:FISMO 
+  xmlns:ns2="http://www.fiesta-iot.eu/fedspec" 
+  xmlns:ns3="http://www.w3.org/2007/SPARQL/protocol-types#"
+
+  id="04e00f00-cdd3-11e7-a9d0-fa163e145147" name="edited Service">
+  <ns2:description>This Service is ...</ns2:description>
+  <ns2:discoverable>false</ns2:discoverable>
+  <ns2:experimentControl>
+    <ns2:scheduling>
+      <ns2:startTime>2018-02-16T10:06:00Z</ns2:startTime>
+      <ns2:Periodicity>1234</ns2:Periodicity>
+      <ns2:stopTime>2018-03-15T11:58:00Z</ns2:stopTime>
+    </ns2:scheduling>
+  </ns2:experimentControl>
+  <ns2:experimentOutput>
+    <ns2:file>
+      <ns2:type>"text/plain"</ns2:type>
+    </ns2:file>
+    <ns2:file>
+      <ns2:type>"text/tab-separated-values"</ns2:type>
+    </ns2:file>
+    <ns2:file>
+      <ns2:type>"text/csv"</ns2:type>
+    </ns2:file>
+    <ns2:file>
+      <ns2:type>"application/sparql-results+json"</ns2:type>
+    </ns2:file>
+    <ns2:widget widgetID="eu.fiesta_iot.analytics.toolkit">
+      <ns2:presentationAttr name="requestBody" value=""></ns2:presentationAttr>
+    </ns2:widget>
+  </ns2:experimentOutput>
+  <ns2:queryControl>
+    <ns2:quantityKind>http://purl.org/iot/vocab/m3-lite#MileageTotal</ns2:quantityKind>
+    <ns2:staticLocation>
+      <ns2:latitude>37.403902</ns2:latitude>
+      <ns2:longitude>127.159798</ns2:longitude>
+    </ns2:staticLocation>
+    <ns2:queryInterval>
+      <ns2:fromDateTime>2018-03-01T00:00:00Z</ns2:fromDateTime>
+      <ns2:toDateTime>2018-03-03T08:56:00Z</ns2:toDateTime>
+      <ns2:intervalNowToPast>232</ns2:intervalNowToPast>
+    </ns2:queryInterval>
+    <ns3:query-request>
+      <query>
+        <![CDATA[PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ssn: <http://purl.oclc.org/NET/ssnx/ssn#>
+PREFIX iot-lite: <http://purl.oclc.org/NET/UNIS/fiware/iot-lite#>
+PREFIX dul: <http://www.loa.istc.cnr.it/ontologies/DUL.owl#>
+PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX qu-quantity: <http://purl.oclc.org/NET/ssnx/qu/quantity#>
+PREFIX qu-unit: <http://purl.oclc.org/NET/ssnx/qu/unit#>
+PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX m3-lite: <http://purl.org/iot/vocab/m3-lite#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+# url: https://platform-dev.fiesta-iot.eu/iot-registry/api/queries/execute/global
+SELECT DISTINCT ?sensor  ?val ?timeStamp
+WHERE {
+#remove the hash sign from the filters  to enable them
+FILTER (IRI(?qkType)=<http://purl.org/iot/vocab/m3-lite#MileageTotal>) .
+FILTER ((?timeStamp > "2018-03-01T00:00:00Z"^^xsd:dateTime && ?timeStamp < "2018-03-03T08:56:00Z"^^xsd:dateTime )  ) .
+?obsr a ssn:Observation .
+?obsr ssn:observedBy ?sensor .
+#testbed 1
+{
+  ?sensor ssn:hasDeployment ?testbed .
+}
+?obsr ssn:observationResult ?sensout .
+?obsr ssn:observedProperty ?qk .
+?qk a ?qkType .
+?sensout ssn:hasValue ?obsrVal .
+?obsrVal dul:hasDataValue ?val .
+?obsr ssn:observationSamplingTime ?instant.
+?instant time:inXSDDateTime ?timeStamp.
+} order by DESC(?timeStamp)]]>
+      </query>
+    </ns3:query-request>
+    <ns2:dynamicAttrs>
+      <ns2:predefinedDynamicAttr>
+        <ns2:dynamicQueryInterval>
+          <ns2:intervalNowToPast>612</ns2:intervalNowToPast>
+        </ns2:dynamicQueryInterval>
+        <ns2:dynamicGeoLocation>
+          <ns2:latitude>37.410481</ns2:latitude>
+          <ns2:longitude>127.170098</ns2:longitude>
+        </ns2:dynamicGeoLocation>
+      </ns2:predefinedDynamicAttr>
+    </ns2:dynamicAttrs>
+  </ns2:queryControl>
+</ns2:FISMO>
